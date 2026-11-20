@@ -1,5 +1,6 @@
 package com.beanlinked.config;
 
+import com.beanlinked.controller.BeanLinkedController;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
@@ -7,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 public class JerseyConfig extends ResourceConfig {
 
     public JerseyConfig() {
-        // REQUIRED: tell Jersey where the REST classes are found
-        packages("com.beanlinked.controller");
+        register(BeanLinkedController.class);
     }
 }
