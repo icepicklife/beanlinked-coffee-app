@@ -40,7 +40,7 @@
                         </div>
                         <button type="button" class="btn header-btn" onclick="toggleInspector()">
                             <span data-icon="terminal"></span><span>API log</span>
-                            <span id="inspector-count-badge">0</span>
+                            <span id="inspector-count-badge" class="count-badge">0</span>
                         </button>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="field">
                                     <label for="reg-phone">Mobile Number</label>
-                                    <input id="reg-phone" class="input num" type="text" required pattern="^\+639^\d{9}$" value="+63917"
+                                    <input id="reg-phone" class="input num" type="text" required pattern="^\+639\d{9}$" value="+639"
                                         placeholder="+639171234567">
                                 </div>
                                 <div class="form-actions">
@@ -138,10 +138,15 @@
                                     <h2>Pick your drink</h2>
                                     <p>Espresso, cold brew, matcha and cocoa</p>
                                 </div>
-                                <div id="drink-category-filters" class="segmented"></div>
+                                
                             </div>
-                            <div id="drink-cards-grid" class="drink-grid"></div>
+
+                            <div id="drink-category-filters" class="segmented"></div>
+                            
                         </div>
+
+                        <div id="drink-cards-grid" class="drink-grid"></div>
+
                     </div>
 
                     <div class="card">
@@ -150,7 +155,7 @@
                                 <span class="step">3</span>
                                 <div>
                                     <h2>Build your cup</h2>
-                                    <p>Size, ice, sweetness, add-ons anda note we should know</p>
+                                    <p>Size, ice, sweetness, add-ons and a note we should know</p>
                                 </div>
                             </div>
                             <span id="active-drink-pill" class="active-drink"></span>
@@ -177,7 +182,7 @@
                                 <div class="subpanel-title">
                                     Sugar
                                 </div>
-                                <div id="size-options" class="chip-grid cols-3">
+                                <div id="sugar-options" class="chip-grid cols-3">
                                 
                                 </div>
                             </div>
@@ -193,12 +198,12 @@
                             <div class="field">
                                 <div class="row-between">
                                     <label for="cup-notes-input"> Note for the barista (optional)</label>
-                                    <span id="cup-notes-container" class="muted tiny num">0 / 120</span>
+                                    <span id="cup-notes-counter" class="muted tiny num">0 / 120</span>
                                 </div>
                                 <input id="cup-notes-input" class="input" type="text" maxlength="120" oninput="updateNotesCounter(this.value)"
                                     placeholder="e.g. Place this near Dongyan">
                             </div>
-                            <button type="button" class="btn btn-dark add-btn" style="padding: .8em 1.3em;" onclick="addCupToTray">
+                            <button type="button" class="btn btn-dark add-btn" style="padding: .8em 1.3em;" onclick="addCupToTray()">
                                 <span data-icon="plus"></span><span>Add to tray</span><span id="live-cup-subtotal" class="price-tag num">₱0.00</span>
                             </button>
                         </div>
@@ -288,7 +293,7 @@
             </section>
         </main>
 
-        <div id="inspector-backdrop" class="backdrop hidden" onclick="toggleInspector(False)"></div>
+        <div id="inspector-backdrop" class="backdrop hidden" onclick="toggleInspector(false)"></div>
         <aside class="drawer" id="inspector-drawer" aria-label="API log">
             <div class="drawer-head">
                 <div><h2>API log</h2><p>Every request the page makes, with its JSON</p></div>
