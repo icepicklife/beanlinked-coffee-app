@@ -26,7 +26,7 @@ public class OrderItem {
 	private List<Modifier> modifiers;
 	
 	@NotBlank
-	@Pattern(regexp = "REGULAR|MEDIUM|LARGE")
+	@Pattern(regexp = "REGULAR|LARGE")
 	private String size;
 	
 	@NotBlank

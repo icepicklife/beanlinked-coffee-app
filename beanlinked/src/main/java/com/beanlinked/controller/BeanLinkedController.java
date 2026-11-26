@@ -3,9 +3,9 @@ package com.beanlinked.controller;
 import com.beanlinked.component.*;
 import com.beanlinked.dto.*;
 import com.beanlinked.entity.*;
+import com.beanlinked.exception.InvalidRequestException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,8 +24,9 @@ public class BeanLinkedController {
 
     // 1. Customer Endpoints
     @GET @Path("/customers")
-    public Response getCustomers(@QueryParam("memberCode") String memberCode) {
-        return Response.ok(customerComponent.getCustomers(memberCode)).build();
+    public Response getCustomers(@QueryParam("memberCode") String memberCode,
+                                 @QueryParam("studentId") String studentId) {
+        return Response.ok(customerComponent.getCustomers(firstNonBlank(memberCode, studentId))).build();
     }
 
     @POST @Path("/customers")
@@ -78,8 +79,10 @@ public class BeanLinkedController {
 
     // 4. CoffeeOrder Endpoints
     @GET @Path("/orders")
-    public Response getOrders(@QueryParam("status") String status, @QueryParam("memberCode") String memberCode) {
-        return Response.ok(orderComponent.getOrders(status, memberCode)).build();
+    public Response getOrders(@QueryParam("status") String status,
+                              @QueryParam("memberCode") String memberCode,
+                              @QueryParam("studentId") String studentId) {
+        return Response.ok(orderComponent.getOrders(status, firstNonBlank(memberCode, studentId))).build();
     }
 
     @POST @Path("/orders")
@@ -90,12 +93,9 @@ public class BeanLinkedController {
     @POST @Path("/orders/status")
     @Consumes(MediaType.WILDCARD)
     public Response updateOrderStatus(@QueryParam("orderId") Long orderId,
-            @QueryParam("status") String status) {
-        if (orderId == null || status == null
-                || !status.matches("(?i)PENDING|PREPARING|READY|COMPLETED|CANCELLED")) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(Collections.singletonMap("error", "orderId and a valid status are required"))
-                    .build();
+                                      @QueryParam("status") String status) {
+        if (orderId == null || status == null || status.trim().isEmpty()) {
+            throw new InvalidRequestException("Query parameters orderId and status are required");
         }
         return Response.ok(orderComponent.updateOrderStatus(orderId, status)).build();
     }
@@ -123,5 +123,9 @@ public class BeanLinkedController {
     public Response deleteOrderItem(@NotNull @QueryParam("id") Long id) {
         orderComponent.removeOrderItem(id);
         return Response.ok("{\"status\":\"DELETED\",\"entity\":\"OrderItem\",\"id\":" + id + "}").build();
+    }
+
+    private static String firstNonBlank(String a, String b) {
+        return (a != null && !a.trim().isEmpty()) ? a.trim() : b;
     }
 }
