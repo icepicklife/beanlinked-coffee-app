@@ -13,8 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomerComponent {
 
-    @Autowired private CustomerRepository customerRepo;
-    @Autowired private CoffeeOrderRepository orderRepo;
+    @Autowired 
+    private CustomerRepository customerRepo;
+    
+    @Autowired 
+    private CoffeeOrderRepository orderRepo;
 
     /** With memberCode: exactly that customer or 404 (the UI uses the 404 to show "Register"). */
     public List<Customer> getCustomers(String memberCode) {

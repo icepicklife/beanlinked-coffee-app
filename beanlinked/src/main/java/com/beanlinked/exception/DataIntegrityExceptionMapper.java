@@ -5,7 +5,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import org.springframework.dao.DataIntegrityViolationException;
 
-/** Safety net for DB unique/foreign-key violations we didn't pre-check -> 409 instead of 500. */
+// Safety net for DB unique/foreign-key violations wasn't pre-checked -> 409 
 @Provider
 public class DataIntegrityExceptionMapper implements ExceptionMapper<DataIntegrityViolationException> {
     @Override

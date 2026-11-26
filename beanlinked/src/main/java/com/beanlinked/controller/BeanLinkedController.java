@@ -18,9 +18,14 @@ import org.springframework.stereotype.Component;
 @Consumes(MediaType.APPLICATION_JSON)
 public class BeanLinkedController {
 
-    @Autowired private MenuComponent menuComponent;
-    @Autowired private CustomerComponent customerComponent;
-    @Autowired private OrderComponent orderComponent;
+    @Autowired 
+    private MenuComponent menuComponent;
+    
+    @Autowired 
+    private CustomerComponent customerComponent;
+    
+    @Autowired 
+    private OrderComponent orderComponent;
 
     // 1. Customer Endpoints
     @GET @Path("/customers")

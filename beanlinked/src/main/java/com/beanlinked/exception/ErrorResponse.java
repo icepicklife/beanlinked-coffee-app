@@ -6,7 +6,7 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-/** The single JSON error shape documented in 00 §3.3. */
+// JSON error shape documented in 00 §3.3.
 public class ErrorResponse {
     private final int status;
     private final String error;
