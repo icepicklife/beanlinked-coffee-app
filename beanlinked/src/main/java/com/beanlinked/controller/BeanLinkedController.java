@@ -30,7 +30,7 @@ public class BeanLinkedController {
     }
 
     @POST @Path("/customers")
-    public Response registerCustomer(@Valid Customer customer) {
+    public Response registerCustomer(@NotNull @Valid Customer customer) {
         return Response.ok(customerComponent.registerCustomer(customer)).build();
     }
 
@@ -48,7 +48,7 @@ public class BeanLinkedController {
     }
 
     @POST @Path("/drinks")
-    public Response createDrink(@Valid BaseDrink drink) {
+    public Response createDrink(@NotNull @Valid BaseDrink drink) {
         return Response.ok(menuComponent.createBaseDrink(drink)).build();
     }
 
@@ -66,7 +66,7 @@ public class BeanLinkedController {
     }
 
     @POST @Path("/modifiers")
-    public Response createModifier(@Valid Modifier modifier) {
+    public Response createModifier(@NotNull @Valid Modifier modifier) {
         return Response.ok(menuComponent.createModifier(modifier)).build();
     }
 
@@ -86,7 +86,7 @@ public class BeanLinkedController {
     }
 
     @POST @Path("/orders")
-    public Response createOrder(@Valid OrderCreateDTO dto) {
+    public Response createOrder(@NotNull @Valid OrderCreateDTO dto) {
         return Response.ok(orderComponent.createOrder(dto.getMemberCode(), dto.getPickupLocation())).build();
     }
 
@@ -114,7 +114,7 @@ public class BeanLinkedController {
     }
 
     @POST @Path("/order-items")
-    public Response addOrderItem(@Valid OrderItemRequestDTO dto) {
+    public Response addOrderItem(@NotNull @Valid OrderItemRequestDTO dto) {
         return Response.ok(orderComponent.addOrderItem(dto)).build();
     }
 
