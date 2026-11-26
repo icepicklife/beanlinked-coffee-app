@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BeanLinked - the Ateneo Coffee Hub</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="css/beanlinked.css">
+
+    </head>
+
+    <body>
+        <header class="site-header">
+            <div class="header-inner">
+                <div class="header-top">
+                    <div class="brand">
+                        <div class="brand-logo" data-icon="cup"></div>
+                        <div>
+                            <h1>Beanlinked <span class="brand-tag">Ateneo De Manila</span></h1>
+                            <p>Order now, Pick up on your vacants</p>
+                        </div>
+                    </div>
+
+                    <div class="header-controls">
+                        <div class="mode-pill">
+                            <span class="status-dot" id="mode-dot" title="Connection status"></span>
+                            <label for="mode-select" class="sr-only">Data source</label>
+                            <select id="mode-select" onchange="handleModeChange(this.value)">
+                                <option value="mock">Demo data (offline)</option>
+                                <option value="live">Live server</option>
+                            </select>
+                        </div>
+                        <div id="live-url-bar" class="url-pill hidden">
+                            <input id="live-base-url" type="text" value="/api" aria-label="API base URL">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="syncFromLiveBackend(true)" title="Reload from the server" data-icon="refresh"></button>
+                        </div>
+                        <button type="button" class="btn header-btn" onclick="toggleInspector()">
+                            <span data-icon="terminal"></span><span>API log</span>
+                            <span id="inspector-count-badge" class="count-badge">0</span>
+                        </button>
+                    </div>
+                </div>
+                <nav class="main-tabs" aria-label="Main">
+                    <button type="button" id="nav-tab-student" class="main-tab is-active" onclick="switchMainTab('student')">
+                        <span data-icon="cup"></span>
+                        Order a drink
+                    </button>
+                    <button type="button" id="nav-tab-barista" class="main-tab" onclick="switchMainTab('barista')">
+                        <span data-icon="bell"></span>
+                        Barista queue
+                        <span id="nav-active-queue-badge" class="count-badge">0</span>
+                    </button>
+                    <button type="button" id="nav-tab-admin" class="main-tab" onclick="switchMainTab('admin')">
+                        <span data-icon="db"></span>
+                        Admin
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <div id="toast-container" class="toasts"></div>
+
+        <main class="page">
+
+            <section id="tab-student" class="order-layout">
+
+                <div class="order-main">
+
+                    <div class="card">
+                        <div class="card-head">
+                            <div class="card-title">
+                                <span class="step">1</span>
+                                <div>
+                                    <h2>Who's ordering, and where?</h2>
+                                    <p>Pick your Ateneo ID and the stall nearest your next class</p>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-soft btn-sm" onclick="toggleInlineRegForm()">
+                                <span data-icon="userplus"></span> New here? Register
+                            </button>
+                        </div>
+
+                        <div id="inline-reg-panel" class="reg-panel hidden">
+                            <div class="row-between">
+                                <strong>Register your Ateneo ID</strong>
+                                <button type="button" class="btn btn-ghost btn-sm" onclick="toggleInlineRegForm()">
+                                    <span data-icon="x"></span>
+                                    Close
+                                </button>
+                            </div>
+                            <form id="inline-reg-form" class="reg-form" onsubmit="handleInlineRegistration(event)">
+                                <div class="field">
+                                    <label for="reg-memberCode">Ateneo ID Number</label>
+                                    <input id="reg-memberCode" class="input num" type="text" required pattern="^\d{6}$" maxlength="6"
+                                        placeholder="e.g. 231234" inputmode="numeric">
+                                </div>
+                                <div class="field">
+                                    <label for="reg-name">Full name</label>
+                                    <input id="reg-name" class="input" type="text" required minlength="2" maxlength="100"
+                                        placeholder="e.g. Bryan Maniego">
+                                </div>
+                                <div class="field">
+                                    <label for="reg-phone">Mobile Number</label>
+                                    <input id="reg-phone" class="input num" type="text" required pattern="^\+639\d{9}$" value="+639"
+                                        placeholder="+639171234567">
+                                </div>
+                                <div class="form-actions">
+                                    <p id="inline-reg-error" class="form-error hidden"></p>
+                                    <button type="submit" class="btn btn-primary" style="margin-left: auto;">
+                                        <span data-icon="check"></span>
+                                        Register
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="grid-who">
+                            <div class="field">
+                                <label for="student-select">Ateneo ID</label>
+                                <select id="student-select" class="select" onchange="selectStudent(this.value)"></select>
+                            </div>
+                            <div>
+                                <span class="label">Pickup stall</span>
+                                <div id="stall-selector" class="chip-grid cols-5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head">
+                            <div class="card-title">
+                                <span class="step">2</span>
+                                <div>
+                                    <h2>Pick your drink</h2>
+                                    <p>Espresso, cold brew, matcha and cocoa</p>
+                                </div>
+                                
+                            </div>
+
+                            <div id="drink-category-filters" class="segmented"></div>
+                            
+                        </div>
+
+                        <div id="drink-cards-grid" class="drink-grid"></div>
+
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head">
+                            <div class="card-title">
+                                <span class="step">3</span>
+                                <div>
+                                    <h2>Build your cup</h2>
+                                    <p>Size, ice, sweetness, add-ons and a note we should know</p>
+                                </div>
+                            </div>
+                            <span id="active-drink-pill" class="active-drink"></span>
+                        </div>
+
+                        <div class="grid-3">
+                            <div class="subpanel">
+                                <div class="subpanel-title">
+                                    Size
+                                </div>
+                                <div id="size-options" class="chip-grid cols-2">
+                                
+                                </div>
+                            </div>
+                            <div class="subpanel">
+                                <div class="subpanel-title">
+                                    Ice
+                                </div>
+                                <div id="ice-options" class="chip-grid cols-2">
+                                
+                                </div>
+                            </div>
+                            <div class="subpanel">
+                                <div class="subpanel-title">
+                                    Sugar
+                                </div>
+                                <div id="sugar-options" class="chip-grid cols-3">
+                                
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row-between" style="margin: 20px 0 10px;">
+                            <strong>Add-ons</strong>
+                            <span class="muted small">Pick as many as you like</span>
+                        </div>
+                        <div id="modifiers-grouped-container" class="mod-grid"></div>
+
+                        <div class="builder-foot">
+                            <div class="field">
+                                <div class="row-between">
+                                    <label for="cup-notes-input"> Note for the barista (optional)</label>
+                                    <span id="cup-notes-counter" class="muted tiny num">0 / 120</span>
+                                </div>
+                                <input id="cup-notes-input" class="input" type="text" maxlength="120" oninput="updateNotesCounter(this.value)"
+                                    placeholder="e.g. Place this near Dongyan">
+                            </div>
+                            <button type="button" class="btn btn-dark add-btn" style="padding: .8em 1.3em;" onclick="addCupToTray()">
+                                <span data-icon="plus"></span><span>Add to tray</span><span id="live-cup-subtotal" class="price-tag num">₱0.00</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="sticky-col">
+                    <div class="tray">
+                        <div class="tray-head">
+                            <div class="row-between" style="flex-wrap:nowrap">
+                                <div>
+                                    <h3>Your tray</h3>
+                                    <span id="tray-count-pill" class="tray-count">0 cups</span>
+                                </div>
+                                <svg id="tray-cup" class="tray-cup" viewBox="0 0 64 76" role="img" aria-label="Cup fills as you add drinks">
+                                    <defs><clipPath id="cupClip"><path d="M11 18 h42 l-4.6 49 a6 6 0 0 1 -6 5.4 h-20.8 a6 6 0 0 1 -6 -5.4 z"/></clipPath></defs>
+                                    <g clip-path="url(#cupClip)">
+                                        <rect x="0" y="18" width="64" height="58" fill="#FFFDF9"/>
+                                        <rect class="liquid" x="0" y="18" width="64" height="58" fill="#B98A62"/>
+                                        <circle class="boba" cx="22" cy="65" r="3.6" fill="#2E1B10"/>
+                                        <circle class="boba" cx="31" cy="67" r="3.6" fill="#2E1B10"/>
+                                        <circle class="boba" cx="40" cy="65" r="3.6" fill="#2E1B10"/>
+                                        <circle class="boba" cx="27" cy="59" r="3.6" fill="#2E1B10"/>
+                                        <circle class="boba" cx="36" cy="59" r="3.6" fill="#2E1B10"/>
+                                    </g>
+                                    <path d="M11 18 h42 l-4.6 49 a6 6 0 0 1 -6 5.4 h-20.8 a6 6 0 0 1 -6 -5.4 z" fill="none" stroke="#4A2E1E" stroke-width="3" stroke-linejoin="round"/>
+                                    <rect x="7" y="11" width="50" height="8" rx="4" fill="#2F5BD3"/>
+                                    <path d="M37 11 L44 1" stroke="#2F5BD3" stroke-width="4.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div id="tray-meta-summary" class="tray-meta"></div>
+                        </div>
+                        <div id="tray-items-container" class="tray-items"></div>
+                        <div class="tray-foot">
+                            <div class="total-row"><span class="muted" style="font-weight:800">Total</span><strong id="tray-total-php" class="num">₱0.00</strong></div>
+                            <label class="send-now">
+                                <input type="checkbox" id="chk-submit-preparing" checked>
+                                <span><strong>Send to the barista right away</strong>
+                                <span>Unchecked, the order stays PENDING and is auto-cancelled after 30 minutes (handy for the scheduler demo).</span></span>
+                            </label>
+                            <button type="button" id="btn-place-order" class="btn btn-primary btn-block" onclick="placeOrderFromTray()"><span data-icon="send"></span>Place order</button>
+                        </div>
+                    </div>
+                </aside>
+            </section>
+
+            <section id="tab-barista" class="hidden">
+                <div class="card">
+                    <div class="row-between">
+                        <div class="card-title">
+                            <div><h2>Barista queue</h2><p>Move orders along. Marking one READY texts the student.</p></div>
+                        </div>
+                        <button type="button" id="btn-simulate-scheduler" class="btn btn-caramel" onclick="simulateScheduledTask()"><span data-icon="clock"></span><span>Run scheduler now</span></button>
+                    </div>
+                    <div class="filter-bar">
+                        <div id="barista-status-filters" class="row" style="gap:6px"></div>
+                        <div class="row">
+                            <div class="search"><span data-icon="search"></span>
+                                <input id="barista-search-id" class="input num" type="text" maxlength="6" oninput="renderBaristaQueue()" placeholder="Search by Ateneo ID" aria-label="Search by Ateneo ID"></div>
+                            <button type="button" class="btn btn-soft" onclick="queryOrdersViaApi()"><span data-icon="refresh"></span>Refresh</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="barista-layout">
+                    <div id="barista-orders-grid" class="order-grid"></div>
+                    <aside class="sms-panel">
+                        <div class="sms-head">
+                            <div><h3>Texts sent</h3><p>Retrofit → fakeTwilio</p></div>
+                            <span id="sms-count-badge" class="sms-count">0 sent</span>
+                        </div>
+                        <div id="twilio-sms-feed" class="sms-feed"></div>
+                    </aside>
+                </div>
+            </section>
+
+            <section id="tab-admin" class="hidden">
+                <div class="card">
+                    <div class="card-head">
+                        <div class="card-title"><div><h2>Admin: all 5 entities</h2><p>Create, list and delete rows while the app runs</p></div></div>
+                        <button type="button" class="btn btn-soft btn-sm" onclick="refreshCurrentCrudEntity()"><span data-icon="refresh"></span>Refresh</button>
+                    </div>
+                    <div id="admin-entity-tabs" class="entity-tabs"></div>
+                    <div id="admin-create-form-container" class="create-box"></div>
+                    <div id="admin-table-container" class="table-wrap"></div>
+                </div>
+            </section>
+        </main>
+
+        <div id="inspector-backdrop" class="backdrop hidden" onclick="toggleInspector(false)"></div>
+        <aside class="drawer" id="inspector-drawer" aria-label="API log">
+            <div class="drawer-head">
+                <div><h2>API log</h2><p>Every request the page makes, with its JSON</p></div>
+                <div class="row" style="gap:6px">
+                    <button type="button" class="btn drawer-btn btn-sm" onclick="clearRestLogs()">Clear</button>
+                    <button type="button" class="btn drawer-btn btn-icon" onclick="toggleInspector(false)" aria-label="Close" data-icon="x"></button>
+                </div>
+            </div>
+            <div class="drawer-meta"><span id="inspector-mode-label">Mode: demo data</span><span id="inspector-total-calls">0 calls logged</span></div>
+            <div id="rest-log-list" class="log-list"></div>
+        </aside>
+
+        <script src="js/app.js"></script>
+    </body>
+</html>
