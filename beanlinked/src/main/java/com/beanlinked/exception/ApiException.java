@@ -1,6 +1,6 @@
 package com.beanlinked.exception;
 
-/** Base for all expected business errors. The HTTP status travels with the exception. */
+// Base  errors, HTTP status travels with the exception
 public class ApiException extends RuntimeException {
     private final int status;
 

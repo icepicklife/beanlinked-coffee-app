@@ -19,11 +19,20 @@ public class MenuComponent {
     private static final Set<String> CATEGORIES = Set.of("COFFEE", "TEA", "NON_COFFEE");
     private static final Set<String> MODIFIER_TYPES = Set.of("MILK", "SYRUP", "TOPPING", "SHOT");
 
-    @Autowired private BaseDrinkRepository drinkRepo;
-    @Autowired private ModifierRepository modifierRepo;
-    @Autowired private CustomerRepository customerRepo;
-    @Autowired private CoffeeOrderRepository orderRepo;
-    @Autowired private OrderItemRepository itemRepo;
+    @Autowired 
+    private BaseDrinkRepository drinkRepo;
+    
+    @Autowired
+    private ModifierRepository modifierRepo;
+    
+    @Autowired 
+    private CustomerRepository customerRepo;
+    
+    @Autowired 
+    private CoffeeOrderRepository orderRepo;
+    
+    @Autowired 
+    private OrderItemRepository itemRepo;
 
     @PostConstruct
     public void seedDatabase() {
@@ -85,7 +94,7 @@ public class MenuComponent {
         }
     }
 
-    // ---------------------------------------------------------------- Drinks
+    // Drinks
 
     public List<BaseDrink> getBaseDrinks(String category) {
         if (category != null && !category.trim().isEmpty()) {
@@ -119,7 +128,7 @@ public class MenuComponent {
         drinkRepo.delete(drink);
     }
 
-    // ------------------------------------------------------------- Modifiers
+    // Modifiers
 
     public List<Modifier> getModifiers(String type) {
         if (type != null && !type.trim().isEmpty()) {

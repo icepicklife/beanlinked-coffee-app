@@ -17,10 +17,17 @@ import retrofit2.Retrofit;
 @Component
 public class SMSNotificationComponent {
 
-    @Value("${faketwilio.url}")                   private String url;
-    @Value("${faketwilio.messaging-service-sid}") private String messagingServiceSid;
-    @Value("${faketwilio.account-sid}")           private String accountSid;
-    @Value("${faketwilio.auth-token}")            private String authToken;
+    @Value("${faketwilio.url}")
+    private String url;
+    
+    @Value("${faketwilio.messaging-service-sid}")
+    private String messagingServiceSid;
+    
+    @Value("${faketwilio.account-sid}")
+    private String accountSid;
+    
+    @Value("${faketwilio.auth-token}")
+    private String authToken;
 
     private final ObjectMapper mapper = new ObjectMapper();
     private FakeTwilioAPI api;
